@@ -2,7 +2,6 @@ from app import db
 from flask_serialize import FlaskSerializeMixin
 
 
-
 class Client(FlaskSerializeMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     phone = db.Column(db.String(12))
@@ -42,7 +41,7 @@ class Return(FlaskSerializeMixin, db.Model):
         return f'<Return {self.id}>'
 
 
-class CellDelivery(db.Model):
+class CellDelivery(FlaskSerializeMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     delivery_id = db.Column(db.Integer, db.ForeignKey('delivery.id'))
     cell_id = db.Column(db.Integer, db.ForeignKey('cell.id'))
