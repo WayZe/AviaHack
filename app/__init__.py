@@ -9,8 +9,3 @@ db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
 from app import routes, models
-c = models.Client(phone='1', passport='1234', name='Andrey')
-d = models.Delivery(client=c)
-db.session.add(c)
-db.session.add(d)
-db.session.commit()
