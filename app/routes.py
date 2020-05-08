@@ -8,47 +8,37 @@ def index():
     return "Hello, World!"
 
 
-@app.route('/client/<int:item_id>', methods=['GET', 'DELETE'])
-@app.route('/clients', methods=['GET'])
+@app.route('/client/<int:item_id>', methods=['GET', 'DELETE', 'POST', 'PUT'])
+@app.route('/clients', methods=['GET', 'DELETE'])
 def items(item_id=None):
     return models.Client.get_delete_put_post(item_id)
 
 
-@app.route('/clients', methods=['POST'])
-def post_clients(item_id=None):
-    return models.Client.get_delete_put_post(item_id)
-
-
-@app.route('/clients', methods=['PUT'])
-def put_clients(item_id=None):
-    return models.Client.get_delete_put_post(item_id)
-
-
-@app.route('/delivery/<int:item_id>', methods=['GET', 'DELETE'])
-@app.route('/deliveries', methods=['GET'])
+@app.route('/delivery/<int:item_id>', methods=['GET', 'DELETE', 'POST', 'PUT'])
+@app.route('/deliveries', methods=['GET', 'DELETE'])
 def get_delivery(item_id=None):
     return models.Delivery.get_delete_put_post(item_id)
 
 
-@app.route('/item/<int:item_id>', methods=['GET', 'DELETE'])
-@app.route('/items', methods=['GET'])
+@app.route('/item/<int:item_id>', methods=['GET', 'DELETE', 'POST', 'PUT'])
+@app.route('/items', methods=['GET', 'DELETE'])
 def get_item(item_id=None):
     return models.Item.get_delete_put_post(item_id)
 
 
-@app.route('/return/<int:item_id>', methods=['GET', 'DELETE'])
-@app.route('/returns', methods=['GET'])
+@app.route('/return/<int:item_id>', methods=['GET', 'DELETE', 'POST', 'PUT'])
+@app.route('/returns', methods=['GET', 'DELETE'])
 def get_return(item_id=None):
     return models.Return.get_delete_put_post(item_id)
 
 
-@app.route('/cell_delivery/<int:item_id>', methods=['GET', 'DELETE'])
-@app.route('/cells_deliveries', methods=['GET'])
+@app.route('/cell_delivery/<int:item_id>', methods=['GET', 'DELETE', 'POST', 'PUT'])
+@app.route('/cells_deliveries', methods=['GET', 'DELETE'])
 def get_celldelivery(item_id=None):
     return models.CellDelivery.get_delete_put_post(item_id)
 
 
-@app.route('/cell/<int:item_id>', methods=['GET', 'DELETE'])
-@app.route('/cells', methods=['GET'])
+@app.route('/cell/<int:item_id>', methods=['GET', 'DELETE', 'POST', 'PUT'])
+@app.route('/cells', methods=['GET', 'DELETE'])
 def get_cell(item_id=None):
     return models.Cell.get_delete_put_post(item_id)

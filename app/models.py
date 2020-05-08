@@ -1,6 +1,8 @@
 from app import db
 from flask_serialize import FlaskSerializeMixin
 
+FlaskSerializeMixin.db = db
+
 
 class Client(FlaskSerializeMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
@@ -8,6 +10,9 @@ class Client(FlaskSerializeMixin, db.Model):
     passport = db.Column(db.String(11))
     name = db.Column(db.String(80))
     deliveries = db.relationship('Delivery', backref='client', lazy='dynamic')
+
+    def can_delete(self):
+        pass
 
     def __repr__(self):
         return f'<Client {self.name}>'
