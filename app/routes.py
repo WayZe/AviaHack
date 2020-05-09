@@ -50,6 +50,11 @@ def get_cell(item_id=None):
 
 @app.route('/put_item', methods=['POST'])
 def put_item():
+    """
+    Сортирует товар по ячейкам. Если ячейка для заказа не выделена, то ячейка выделяется и в item записывается ее id
+    Если ячейка для заказа выделена, то в item записывается ее id
+    Если ячейка для заказа выделена, но переполнена, то создается новая ячейка и ее id привязывается к item
+    """
     barcode = request.form.get('barcode')
     item = models.Item.query.filter_by(barcode=barcode).first()
     if item.cell is not None:
