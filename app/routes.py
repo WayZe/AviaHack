@@ -1,12 +1,12 @@
 import json
+from datetime import datetime
 from typing import List
 
 from flask import jsonify, request
 from sqlalchemy import func
 
-from app import app, models
-from app import db
-from app.models import Delivery
+from app import app, models, db
+from app.models import Delivery, Item
 
 
 @app.route('/')
@@ -86,7 +86,7 @@ def put_item():
 
 @app.route('/give_item', methods=['POST'])
 def give_item():
-    """Получение списка товаров по телефону и ФИО
+    """Получение списка товаров по телефону и ФИО.
 
     Пример запроса: curl -X POST -d "phone=12"  localhost:5000/give_item
     """
@@ -102,9 +102,11 @@ def give_item():
         print('Переданы неизвестные параметры')
         return {}
 
+    print(models.Client.query.filter_by().all())
+
     deliveries = models.Delivery.query.filter_by(client_id=client_id).all()  # type: List[Delivery]
     for delivery in deliveries:
-        items1 = models.Item.query.filter_by(delivery_id=delivery.id).all()
+        items1 = models.Item.query.filter_by(delivery_id=delivery.id).all()  # type: List[Item]
         dev = {}
         for item in items1:
             dev[f'Item {item.id}'] = item.__dict__
@@ -112,3 +114,25 @@ def give_item():
         jsons[f'Delivery {delivery.id}'] = dev
 
     return jsonify(str(jsons).replace('\'', ''))
+
+
+@app.route('/fix_given_item', methods=['POST'])
+def fix_given_item():
+    """Установка времени, когда был отдан товар клиенту.
+    Считаем его как флаг о том, что товар отдан,
+    а также по нему будет рассчитан срок возврата.
+    Входные данные: штрих-код.
+
+    Пример запроса: curl -X POST -d "barcode=12"  localhost:5000/fix_given_item
+    """
+    barcodes = request.form.getlist('barcode')  # type: List[str]
+
+    if barcodes is not None:
+        for barcode in barcodes:
+            item = models.Item.query.filter_by(barcode=barcode).first()  # type: Item
+            item.delivered_date = datetime.now()
+        db.session.commit()
+    else:
+        print('Не передан штрих-код')
+
+    return {}

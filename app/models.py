@@ -41,7 +41,7 @@ class Item(FlaskSerializeMixin, db.Model):
     cell_id = db.Column(db.Integer, db.ForeignKey('items_cell.id'))
     return_id = db.Column(db.Integer, db.ForeignKey('return.id'))
     barcode = db.Column(db.Integer)
-    delivered_date = db.Column(db.Date)
+    delivered_date = db.Column(db.DateTime)
 
     create_fields = update_fields = ['delivery', 'barcode', 'return', 'delivered_date', 'cell']
 
