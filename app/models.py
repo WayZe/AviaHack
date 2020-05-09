@@ -36,6 +36,9 @@ class Item(FlaskSerializeMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     delivery_id = db.Column(db.Integer, db.ForeignKey('delivery.id'))
     barcode = db.Column(db.String(12))
+    isReturned = db.Column(db.Bool)
+    DeliviriedDate = db.Column(db.Date)
+    isInCell = db.Column(db.Bool)
     returns = db.relationship('Return', backref='item', lazy='dynamic')
 
     create_fields = update_fields = ['delivery', 'barcode', 'return', ]
@@ -69,6 +72,7 @@ class CellDelivery(FlaskSerializeMixin, db.Model):
 
 class Cell(FlaskSerializeMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    capacity = db.Column(db.Integer)
     cell_deliveries = db.relationship('CellDelivery', backref='cell', lazy='dynamic')
 
     create_fields = update_fields = ['cell_delivery', ]
