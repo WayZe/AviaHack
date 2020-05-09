@@ -36,11 +36,10 @@ class Item(FlaskSerializeMixin, db.Model):
     delivery_id = db.Column(db.Integer, db.ForeignKey('delivery.id'))
     cell_id = db.Column(db.Integer, db.ForeignKey('ItemsCell.id'))
     barcode = db.Column(db.Integer)
-    is_returned = db.Column(db.Boolean)
     deliviried_date = db.Column(db.Date)
     returns = db.relationship('Return', backref='item', lazy=True)
 
-    create_fields = update_fields = ['delivery', 'barcode', 'return', 'is_returned', 'deliviried_date', 'cell']
+    create_fields = update_fields = ['delivery', 'barcode', 'return', 'deliviried_date', 'cell']
 
     def __repr__(self):
         return f'<Item {self.id}>'
