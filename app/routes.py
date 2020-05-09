@@ -4,7 +4,8 @@ from typing import List
 from flask import jsonify, request
 from sqlalchemy import func
 
-from app import app, models, db
+from app import app, models
+from app import db
 from app.models import Delivery
 
 
