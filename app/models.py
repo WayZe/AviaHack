@@ -35,10 +35,10 @@ class Delivery(FlaskSerializeMixin, db.Model):
 class Item(FlaskSerializeMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     delivery_id = db.Column(db.Integer, db.ForeignKey('delivery.id'))
-    barcode = db.Column(db.String(12))
-    isReturned = db.Column(db.Bool)
+    barcode = db.Column(db.Integer)
+    isReturned = db.Column(db.Boolean)
     DeliviriedDate = db.Column(db.Date)
-    isInCell = db.Column(db.Bool)
+    isInCell = db.Column(db.Boolean)
     returns = db.relationship('Return', backref='item', lazy='dynamic')
 
     create_fields = update_fields = ['delivery', 'barcode', 'return', ]
