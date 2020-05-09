@@ -1,3 +1,4 @@
+from flask import request
 from app import app
 from app import models
 
@@ -42,3 +43,13 @@ def get_celldelivery(item_id=None):
 @app.route('/cells', methods=['GET', 'POST'])
 def get_cell(item_id=None):
     return models.Cell.get_delete_put_post(item_id)
+
+
+@app.route('/put_item', methods=['POST'])
+def put_item():
+    _barcode = request.form.get('barcode')
+    item = models.Item.query.filter_by(barcode=f'{_barcode}').first()
+    delivery_cells = models.Item.query.filter_by(delivery=f'{item.delivery}')
+    for c in delivery_cells:
+        
+    return str(item.id)

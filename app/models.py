@@ -24,7 +24,7 @@ class Delivery(FlaskSerializeMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     client_id = db.Column(db.Integer, db.ForeignKey('client.id'))
     items = db.relationship('Item', backref='delivery', lazy='dynamic')
-    #cell_deliveries = db.relationship('CellDelivery', backref='delivery', lazy='dynamic')
+    cell_deliveries = db.relationship('CellDelivery', backref='delivery', lazy='dynamic')
 
     create_fields = update_fields = ['client', ]
 
@@ -74,7 +74,6 @@ class Cell(FlaskSerializeMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     capacity = db.Column(db.Integer)
     cell_deliveries = db.relationship('CellDelivery', backref='cell', lazy=True)
-
     create_fields = update_fields = ['cell_delivery', 'capacity', ]
 
     def __repr__(self):
