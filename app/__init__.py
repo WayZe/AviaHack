@@ -15,7 +15,7 @@ from app import routes, models
 # cell = models.Cell(capacity=3)
 # it_cel = models.Items_cell(cell=cell)
 # i = models.Item(barcode=12, delivery=d, cell=it_cel)
-# it = models.Item(barcode=13, delivery=d, cell=it_cel)
+# it = models.Item(barcode=14, delivery=d)
 # db.session.add(c)
 # db.session.add(d)
 # db.session.add(cell)
@@ -24,3 +24,7 @@ from app import routes, models
 # db.session.add(it)
 # db.session.commit()
 
+#cell = models.Cell(capacity=3)
+# it = models.Item(barcode=21, delivery=models.Delivery.query.get(1))
+# db.session.add(it)
+# db.session.commit()

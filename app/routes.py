@@ -1,4 +1,7 @@
 from flask import request
+from sqlalchemy import func
+import json
+from app import db
 from app import app
 from app import models
 
@@ -47,9 +50,27 @@ def get_cell(item_id=None):
 
 @app.route('/put_item', methods=['POST'])
 def put_item():
-    _barcode = request.form.get('barcode')
-    item = models.Item.query.filter_by(barcode=f'{_barcode}').first()
-    delivery_cells = models.Item.query.filter_by(delivery=f'{item.delivery}')
-    for c in delivery_cells:
-        pass
-    return str(item.id)
+    barcode = request.form.get('barcode')
+    item = models.Item.query.filter_by(barcode=barcode).first()
+    if item.cell is not None:
+        result = json.dumps({'cell': item.cell.id})
+        return result
+    delivery_item = models.Item.query.filter(models.Item.delivery == item.delivery, models.Item.cell != None)
+    delivery_cells = delivery_item.with_entities(models.Item.cell_id, models.Item.cell,
+                                                 func.count(models.Item.cell)).group_by(models.Item.cell)
+
+    for c in delivery_cells.all():
+        it_cell = models.Items_cell.query.get(c[0])
+        if it_cell.cell.capacity > c[2]:
+            item.cell = it_cell
+            result = json.dumps({'cell': it_cell.cell.id})
+            db.session.commit()
+            return result
+
+    cell = models.Cell.query.filter(models.Cell.items_cell == None)
+    it_cel = models.Items_cell(cell=cell.first())
+    item.cell = it_cel
+    result = json.dumps({'cell': cell.first().id})
+    db.session.add(it_cel)
+    db.session.commit()
+    return result
