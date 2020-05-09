@@ -2,7 +2,7 @@ import json
 from datetime import datetime
 from typing import List
 
-from flask import jsonify, request
+from flask import request
 from sqlalchemy import func
 
 from app import app, models, db
@@ -100,8 +100,6 @@ def give_item():
         print('Переданы неизвестные параметры')
         return {}
 
-    print(models.Client.query.filter_by().all())
-
     deliveries = models.Delivery.query.filter_by(client_id=client_id).all()  # type: List[Delivery]
     for delivery in deliveries:
         items1 = models.Item.query.filter_by(delivery_id=delivery.id).all()  # type: List[Item]
@@ -111,7 +109,7 @@ def give_item():
             del dev[f'Item {item.id}']['_sa_instance_state']
         jsons[f'Delivery {delivery.id}'] = dev
 
-    return jsonify(str(jsons).replace('\'', ''))
+    return json.dumps(str(jsons).replace('\'', ''))
 
 
 @app.route('/fix_given_item', methods=['POST'])
