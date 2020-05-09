@@ -52,8 +52,8 @@ class Item(FlaskSerializeMixin, db.Model):
 @dataclass
 class Return(FlaskSerializeMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    items = db.relationship('Item', backref='return', lazy=True)
-    create_fields = update_fields = ['return', ]
+    items = db.relationship('Item', backref='_return', lazy=True)
+    create_fields = update_fields = []
 
     def __repr__(self):
         return f'<Return {self.id}>'

@@ -136,3 +136,13 @@ def fix_given_item():
         print('Не передан штрих-код')
 
     return {}
+
+
+@app.route('/return_item', methods=['POST'])
+def return_item():
+    barcode = request.form.get('barcode')
+    item = models.Item.query.filter_by(barcode=barcode).first()
+    return_it = models.Return()
+    item._return = return_it
+    db.session.commit()
+    return json.dumps({'return_id': return_it.id})
