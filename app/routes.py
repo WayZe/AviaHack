@@ -36,7 +36,7 @@ def get_return(item_id=None):
 @app.route('/cell_delivery/<int:item_id>', methods=['GET', 'DELETE', 'POST', 'PUT'])
 @app.route('/cells_deliveries', methods=['GET', 'POST'])
 def get_celldelivery(item_id=None):
-    return models.CellDelivery.get_delete_put_post(item_id)
+    return models.ItemsCell.get_delete_put_post(item_id)
 
 
 @app.route('/cell/<int:item_id>', methods=['GET', 'DELETE', 'POST', 'PUT'])
@@ -51,5 +51,5 @@ def put_item():
     item = models.Item.query.filter_by(barcode=f'{_barcode}').first()
     delivery_cells = models.Item.query.filter_by(delivery=f'{item.delivery}')
     for c in delivery_cells:
-        
+        pass
     return str(item.id)
