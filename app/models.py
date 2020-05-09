@@ -11,6 +11,8 @@ class Client(FlaskSerializeMixin, db.Model):
     name = db.Column(db.String(80))
     deliveries = db.relationship('Delivery', backref='client', lazy='dynamic')
 
+    create_fields = update_fields = ['phone', 'passport', 'name', ]
+
     def can_delete(self):
         pass
 
@@ -24,6 +26,8 @@ class Delivery(FlaskSerializeMixin, db.Model):
     items = db.relationship('Item', backref='delivery', lazy='dynamic')
     cell_deliveries = db.relationship('CellDelivery', backref='delivery', lazy='dynamic')
 
+    create_fields = update_fields = ['client', ]
+
     def __repr__(self):
         return f'<Delivery {self.id}>'
 
@@ -33,6 +37,8 @@ class Item(FlaskSerializeMixin, db.Model):
     delivery_id = db.Column(db.Integer, db.ForeignKey('delivery.id'))
     barcode = db.Column(db.String(12))
     returns = db.relationship('Return', backref='item', lazy='dynamic')
+
+    create_fields = update_fields = ['delivery', 'barcode', ]
 
     def __repr__(self):
         return f'<Item {self.id}>'
