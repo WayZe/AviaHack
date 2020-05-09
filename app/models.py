@@ -47,6 +47,7 @@ class Item(FlaskSerializeMixin, db.Model):
 class Return(FlaskSerializeMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     item_id = db.Column(db.Integer, db.ForeignKey('item.id'))
+    items = db.relationship('Item', backref='return', lazy='dynamic')
 
     def __repr__(self):
         return f'<Return {self.id}>'
@@ -56,6 +57,7 @@ class CellDelivery(FlaskSerializeMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     delivery_id = db.Column(db.Integer, db.ForeignKey('delivery.id'))
     cell_id = db.Column(db.Integer, db.ForeignKey('cell.id'))
+    cell = db.relationship('Cell', backref='cell_delivery', lazy='dynamic')
 
     def __repr__(self):
         return f'<Cell Delivery {self.id}>'
