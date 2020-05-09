@@ -24,7 +24,7 @@ class Delivery(FlaskSerializeMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     client_id = db.Column(db.Integer, db.ForeignKey('client.id'))
     items = db.relationship('Item', backref='delivery', lazy='dynamic')
-    cell_deliveries = db.relationship('CellDelivery', backref='delivery', lazy='dynamic')
+    #cell_deliveries = db.relationship('CellDelivery', backref='delivery', lazy='dynamic')
 
     create_fields = update_fields = ['client', ]
 
@@ -39,9 +39,9 @@ class Item(FlaskSerializeMixin, db.Model):
     isReturned = db.Column(db.Boolean)
     DeliviriedDate = db.Column(db.Date)
     isInCell = db.Column(db.Boolean)
-    returns = db.relationship('Return', backref='item', lazy='dynamic')
+    returns = db.relationship('Return', backref='item', lazy=True)
 
-    create_fields = update_fields = ['delivery', 'barcode', 'return', ]
+    create_fields = update_fields = ['delivery', 'barcode', 'return', 'isReturned', 'DeliviriedDate', 'isInCell', ]
 
     def __repr__(self):
         return f'<Item {self.id}>'
@@ -50,7 +50,7 @@ class Item(FlaskSerializeMixin, db.Model):
 class Return(FlaskSerializeMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     item_id = db.Column(db.Integer, db.ForeignKey('item.id'))
-    items = db.relationship('Item', backref='return', lazy='dynamic')
+    items = db.relationship('Item', backref='return', lazy=True)
 
     create_fields = update_fields = ['return', 'item', ]
 
@@ -62,7 +62,7 @@ class CellDelivery(FlaskSerializeMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     delivery_id = db.Column(db.Integer, db.ForeignKey('delivery.id'))
     cell_id = db.Column(db.Integer, db.ForeignKey('cell.id'))
-    cell = db.relationship('Cell', backref='cell_delivery', lazy='dynamic')
+    cells = db.relationship('Cell', backref='cell_delivery', lazy=True)
 
     create_fields = update_fields = ['delivery', 'item', 'cell', ]
 
@@ -73,9 +73,9 @@ class CellDelivery(FlaskSerializeMixin, db.Model):
 class Cell(FlaskSerializeMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     capacity = db.Column(db.Integer)
-    cell_deliveries = db.relationship('CellDelivery', backref='cell', lazy='dynamic')
+    cell_deliveries = db.relationship('CellDelivery', backref='cell', lazy=True)
 
-    create_fields = update_fields = ['cell_delivery', ]
+    create_fields = update_fields = ['cell_delivery', 'capacity', ]
 
     def __repr__(self):
         return f'<Cell Delivery {self.id}>'
