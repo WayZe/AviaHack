@@ -71,17 +71,15 @@ def put_item():
         it_cell = models.Items_cell.query.get(c[0])
         if it_cell.cell.capacity > c[2]:
             item.cell = it_cell
-            result = json.dumps({'cell': it_cell.cell.id})
             db.session.commit()
-            return result
+            return json.dumps({'cell': it_cell.cell.id})
 
     cell = models.Cell.query.filter(models.Cell.items_cell == None)
     it_cel = models.Items_cell(cell=cell.first())
     item.cell = it_cel
-    result = json.dumps({'cell': cell.first().id})
     db.session.add(it_cel)
     db.session.commit()
-    return result
+    return json.dumps({'cell': cell.first().id})
 
 
 @app.route('/give_item', methods=['POST'])
@@ -135,7 +133,7 @@ def fix_given_item():
     else:
         print('Не передан штрих-код')
 
-    return {}
+    return
 
 
 @app.route('/return_item', methods=['POST'])
