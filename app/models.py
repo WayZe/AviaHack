@@ -1,9 +1,11 @@
 from app import db
 from flask_serialize import FlaskSerializeMixin
+from dataclasses import dataclass
 
 FlaskSerializeMixin.db = db
 
 
+@dataclass
 class Client(FlaskSerializeMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     phone = db.Column(db.String(12))
@@ -20,6 +22,7 @@ class Client(FlaskSerializeMixin, db.Model):
         return f'<Client {self.name}>'
 
 
+@dataclass
 class Delivery(FlaskSerializeMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     client_id = db.Column(db.Integer, db.ForeignKey('client.id'))
@@ -31,6 +34,7 @@ class Delivery(FlaskSerializeMixin, db.Model):
         return f'<Delivery {self.id}>'
 
 
+@dataclass
 class Item(FlaskSerializeMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     delivery_id = db.Column(db.Integer, db.ForeignKey('delivery.id'))
@@ -45,6 +49,7 @@ class Item(FlaskSerializeMixin, db.Model):
         return f'<Item {self.id}>'
 
 
+@dataclass
 class Return(FlaskSerializeMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     items = db.relationship('Item', backref='return', lazy=True)
@@ -54,6 +59,7 @@ class Return(FlaskSerializeMixin, db.Model):
         return f'<Return {self.id}>'
 
 
+@dataclass
 class Items_cell(FlaskSerializeMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     cell_id = db.Column(db.Integer, db.ForeignKey('cell.id'))
@@ -65,6 +71,7 @@ class Items_cell(FlaskSerializeMixin, db.Model):
         return f'<Cell Delivery {self.id}>'
 
 
+@dataclass
 class Cell(FlaskSerializeMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     capacity = db.Column(db.Integer)
