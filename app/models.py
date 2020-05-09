@@ -34,12 +34,12 @@ class Delivery(FlaskSerializeMixin, db.Model):
 class Item(FlaskSerializeMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     delivery_id = db.Column(db.Integer, db.ForeignKey('delivery.id'))
-    cell_id = db.Column(db.Integer, db.ForeignKey('ItemsCell.id'))
+    cell_id = db.Column(db.Integer, db.ForeignKey('items_cell.id'))
+    return_id = db.Column(db.Integer, db.ForeignKey('return.id'))
     barcode = db.Column(db.Integer)
-    deliviried_date = db.Column(db.Date)
-    returns = db.relationship('Return', backref='item', lazy=True)
+    delivered_date = db.Column(db.Date)
 
-    create_fields = update_fields = ['delivery', 'barcode', 'return', 'deliviried_date', 'cell']
+    create_fields = update_fields = ['delivery', 'barcode', 'return', 'delivered_date', 'cell']
 
     def __repr__(self):
         return f'<Item {self.id}>'
@@ -47,16 +47,14 @@ class Item(FlaskSerializeMixin, db.Model):
 
 class Return(FlaskSerializeMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
-    item_id = db.Column(db.Integer, db.ForeignKey('item.id'))
     items = db.relationship('Item', backref='return', lazy=True)
-
-    create_fields = update_fields = ['return', 'item', ]
+    create_fields = update_fields = ['return', ]
 
     def __repr__(self):
         return f'<Return {self.id}>'
 
 
-class ItemsCell(FlaskSerializeMixin, db.Model):
+class Items_cell(FlaskSerializeMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     cell_id = db.Column(db.Integer, db.ForeignKey('cell.id'))
     cells = db.relationship('Cell', backref='item_cell', lazy=True)
@@ -70,7 +68,7 @@ class ItemsCell(FlaskSerializeMixin, db.Model):
 class Cell(FlaskSerializeMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
     capacity = db.Column(db.Integer)
-    items_cell = db.relationship('ItemsCell', backref='cell', lazy=True)
+    items_cell = db.relationship('Items_cell', backref='cell', lazy=True)
     create_fields = update_fields = ['items_cell', 'capacity', ]
 
     def __repr__(self):

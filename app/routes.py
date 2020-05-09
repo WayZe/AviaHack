@@ -36,7 +36,7 @@ def get_return(item_id=None):
 @app.route('/cell_delivery/<int:item_id>', methods=['GET', 'DELETE', 'POST', 'PUT'])
 @app.route('/cells_deliveries', methods=['GET', 'POST'])
 def get_celldelivery(item_id=None):
-    return models.ItemsCell.get_delete_put_post(item_id)
+    return models.Items_cell.get_delete_put_post(item_id)
 
 
 @app.route('/cell/<int:item_id>', methods=['GET', 'DELETE', 'POST', 'PUT'])

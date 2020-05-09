@@ -13,7 +13,7 @@ from app import routes, models
 # c = models.Client(phone='12',  passport='12345', name='Ilya')
 # d = models.Delivery(client=c)
 # cell = models.Cell(capacity=3)
-# it_cel = models.ItemsCell(cell=cell)
+# it_cel = models.Items_cell(cell=cell)
 # i = models.Item(barcode=12, delivery=d, cell=it_cel)
 # it = models.Item(barcode=13, delivery=d, cell=it_cel)
 # db.session.add(c)
