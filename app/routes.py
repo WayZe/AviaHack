@@ -58,11 +58,15 @@ def get_avail_item():
     Если ячейка для заказа выделена, то в item записывается ее id
     Если ячейка для заказа выделена, но переполнена, то создается новая ячейка и ее id привязывается к item
     """
-    barcode = request.form.get('barcode')
+    req_json = json.loads(request.get_json())
+    barcode = req_json['barcode']
+
     item = models.Item.query.filter_by(barcode=barcode).first()
+
     if item.cell is not None:
         result = json.dumps({'cell': item.cell.id})
         return result
+
     delivery_item = models.Item.query.filter(models.Item.delivery == item.delivery, models.Item.cell != None)
     delivery_cells = delivery_item.with_entities(models.Item.cell_id, models.Item.cell,
                                                  func.count(models.Item.cell)).group_by(models.Item.cell)
@@ -84,11 +88,16 @@ def get_avail_item():
 
 @app.route('/put_in_cell', methods=['POST'])
 def put_item():
-    barcode = request.form.get('barcode')
-    cell_id = request.form.get('cell')
+    req_json = json.loads(request.get_json())
+
+    barcode = req_json['barcode']
+    cell_id = req_json['cell']
+
     item = models.Item.query.filter_by(barcode=barcode).first()
     item.cell = models.Items_cell.query.filter_by(id=cell_id).first()
+
     return json.dumps({'barcode': item.barcode, 'cell': item.cell.id}), 201
+
 
 @app.route('/give_item', methods=['POST'])
 def give_item():
@@ -129,10 +138,10 @@ def fix_given_item():
 
     Пример запроса: curl -X POST -d "barcode=12"  localhost:5000/fix_given_item
     """
-    req = request.get_json()
-    req = json.loads(req)
+    req = json.loads(request.get_json())
     dev_id = req['id']
-    barcodes = req['barcode']
+    barcodes = req['items']
+
     if barcodes is not None:
         for barcode in barcodes:
             item = models.Item.query.filter_by(barcode=barcode).first()  # type: Item
@@ -141,13 +150,17 @@ def fix_given_item():
         db.session.commit()
     else:
         print('Не передан штрих-код')
+
     return json.dumps({'id': dev_id, 'items': barcodes}), 201
 
 
 @app.route('/return_item', methods=['POST'])
 def return_item():
-    barcode = request.form.get('barcode')
+    req = json.loads(request.get_json())
+    barcode = req['barcode']
+
     item = models.Item.query.filter_by(barcode=barcode).first()
+
     if not item:
         return json.dumps({'error': f'Вещь ненайдена с баркодом: {item.barcode}'}), 404
     if (item.delivered_date - datetime.now()) > 21:
