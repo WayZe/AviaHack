@@ -88,7 +88,7 @@ def put_item():
     cell_id = request.form.get('cell')
     item = models.Item.query.filter_by(barcode=barcode).first()
     item.cell = models.Items_cell.query.filter_by(id=cell_id).first()
-    return json.dumps({'barcode': item.barcode, 'cell': item.cell.id})
+    return json.dumps({'barcode': item.barcode, 'cell': item.cell.id}), 201
 
 @app.route('/give_item', methods=['POST'])
 def give_item():
@@ -146,7 +146,11 @@ def fix_given_item():
 def return_item():
     barcode = request.form.get('barcode')
     item = models.Item.query.filter_by(barcode=barcode).first()
+    if not item:
+        return json.dumps({'error': f'Вещь ненайдена с баркодом: {item.barcode}'}), 404
+    if (item.delivered_date - datetime.now()) > 21:
+        return json.dumps({'error': f'Возврат невозможен, истёк срок возврата: {item.barcode}'}), 403
     return_it = models.Return()
     item._return = return_it
     db.session.commit()
-    return json.dumps({'return_id': return_it.id, 'item_id': item.id})
+    return json.dumps({'returnId': return_it.id, 'barcode': item.barcode}), 201
