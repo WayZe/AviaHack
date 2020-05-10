@@ -25,6 +25,7 @@ class Client(FlaskSerializeMixin, db.Model):
 @dataclass
 class Delivery(FlaskSerializeMixin, db.Model):
     id = db.Column(db.Integer, primary_key=True)
+    user_code = db.Column(db.Integer)
     client_id = db.Column(db.Integer, db.ForeignKey('client.id'))
     items = db.relationship('Item', backref='delivery', lazy='dynamic')
 
