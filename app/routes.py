@@ -1,5 +1,5 @@
 import json
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from flask import request
 from sqlalchemy import func
@@ -168,8 +168,8 @@ def return_item():
     item = models.Item.query.filter_by(barcode=barcode).first()
 
     if not item:
-        return json.dumps({'error': f'Вещь ненайдена с баркодом: {item.barcode}'}), 404
-    if (item.delivered_date - datetime.now()) > 21:
+        return json.dumps({'error': f'Вещь ненайдена с баркодом: {req["barcode"]}'}), 404
+    if (item.delivered_date - datetime.now()) > timedelta(days=21):
         return json.dumps({'error': f'Возврат невозможен, истёк срок возврата: {item.barcode}'}), 403
     return_it = models.Return()
     item._return = return_it
