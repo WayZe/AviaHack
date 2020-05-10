@@ -66,8 +66,7 @@ def get_avail_cell():
         return json.dumps({'error': 'Такой вещи не существует'}), 404
 
     if item.cell is not None:
-        result = json.dumps({'cell': item.cell.id})
-        return result
+        return json.dumps({'error': 'Такая вещь уже размещена'}), 409
 
     delivery_item = models.Item.query.filter(models.Item.delivery == item.delivery, models.Item.cell != None)
     delivery_cells = delivery_item.with_entities(models.Item.cell_id, models.Item.cell,
@@ -155,7 +154,7 @@ def fix_given_item():
                 item.delivered_date = datetime.now()
         db.session.commit()
     else:
-        return json.dumps({'error': f'Не передан штрихкод'}), 400
+        return json.dumps({'error': f'Не передан штрих-код'}), 400
 
     return json.dumps({'id': dev_id, 'items': barcodes}), 201
 
@@ -168,7 +167,11 @@ def return_item():
     item = models.Item.query.filter_by(barcode=barcode).first()
 
     if not item:
-        return json.dumps({'error': f'Вещь ненайдена с баркодом: {req["barcode"]}'}), 404
+        return json.dumps({'error': f'Вещь не найдена со штрих-кодом: {req["barcode"]}'}), 404
+
+    if item._return:
+        return json.dumps({'error': 'Товар уже вернули'}), 409
+
     if (item.delivered_date - datetime.now()) > timedelta(days=21):
         return json.dumps({'error': f'Возврат невозможен, истёк срок возврата: {item.barcode}'}), 403
     return_it = models.Return()
