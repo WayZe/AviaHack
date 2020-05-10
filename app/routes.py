@@ -1,6 +1,5 @@
 import json
 from datetime import datetime
-from typing import List
 
 from flask import request
 from sqlalchemy import func
@@ -52,16 +51,19 @@ def get_cell(item_id=None):
 
 
 @app.route('/get_available_cell', methods=['POST'])
-def get_avail_item():
+def get_avail_cell():
     """
     Сортирует товар по ячейкам. Если ячейка для заказа не выделена, то ячейка выделяется и в item записывается ее id
     Если ячейка для заказа выделена, то в item записывается ее id
     Если ячейка для заказа выделена, но переполнена, то создается новая ячейка и ее id привязывается к item
     """
-    req_json = json.loads(request.get_json())
+    req_json = request.get_json()
     barcode = req_json['barcode']
 
     item = models.Item.query.filter_by(barcode=barcode).first()
+
+    if not item:
+        return json.dumps({'error': 'Такой вещи не существует'}), 404
 
     if item.cell is not None:
         result = json.dumps({'cell': item.cell.id})
@@ -88,7 +90,7 @@ def get_avail_item():
 
 @app.route('/put_in_cell', methods=['POST'])
 def put_item():
-    req_json = json.loads(request.get_json())
+    req_json = request.get_json()
 
     barcode = req_json['barcode']
     cell_id = req_json['cell']
@@ -105,25 +107,27 @@ def give_item():
 
     Пример запроса: curl -X POST -d "phone=12"  localhost:5000/give_item
     """
-    req = json.loads(request.get_json())
+    req = request.get_json()
     us_code = req['userCode']  # type: str
 
     if us_code is not None:
-        deliv= models.Delivery.query.filter_by(user_code=us_code).first()  # type: Delivery
+        deliv = models.Delivery.query.filter_by(user_code=us_code).first()  # type: Delivery
     else:
         return json.dumps({'error': f'Не переданы данные о доставке'}), 404
+
     if not deliv:
         return json.dumps({'error': f'Нет заказа с пользовательским кодом: {us_code}'}), 404
 
     res_items = []
     _items = models.Item.query.filter_by(delivery=deliv).all()
+
     for it in _items:
         res_it = dict.fromkeys(['id', 'barcode', 'deliveredDate', 'cellId', 'returnId'])
         res_it['id'] = it.id
         res_it['barcode'] = it.barcode
-        res_it['deliveredDate'] = it.delivered_date
-        res_it['cellId'] = it.cell.cell.id
-        res_it['returnId'] = it._return.id
+        res_it['deliveredDate'] = it.delivered_date.isoformat() if it.delivered_date else None
+        res_it['cellId'] = it.cell.cell.id if it.cell and it.cell.cell else None
+        res_it['returnId'] = it._return.id if it._return else None
         res_items.append(res_it)
 
     return json.dumps({'id': deliv.id, 'userCode': us_code, 'items': res_items})
@@ -138,25 +142,27 @@ def fix_given_item():
 
     Пример запроса: curl -X POST -d "barcode=12"  localhost:5000/fix_given_item
     """
-    req = json.loads(request.get_json())
+    req = request.get_json()
     dev_id = req['id']
     barcodes = req['items']
 
-    if barcodes is not None:
+    if barcodes:
         for barcode in barcodes:
             item = models.Item.query.filter_by(barcode=barcode).first()  # type: Item
-            item.cell = None
-            item.delivered_date = datetime.now()
+
+            if item:
+                item.cell = None
+                item.delivered_date = datetime.now()
         db.session.commit()
     else:
-        print('Не передан штрих-код')
+        return json.dumps({'error': f'Не передан штрихкод'}), 400
 
     return json.dumps({'id': dev_id, 'items': barcodes}), 201
 
 
 @app.route('/return_item', methods=['POST'])
 def return_item():
-    req = json.loads(request.get_json())
+    req = request.get_json()
     barcode = req['barcode']
 
     item = models.Item.query.filter_by(barcode=barcode).first()
