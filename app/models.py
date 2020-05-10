@@ -31,6 +31,9 @@ class Delivery(FlaskSerializeMixin, db.Model):
 
     create_fields = update_fields = ['client', ]
 
+    def __hash__(self):
+        return hash(self.id)
+
     def __repr__(self):
         return f'<Delivery {self.id}>'
 
@@ -48,6 +51,9 @@ class Item(FlaskSerializeMixin, db.Model):
 
     def __repr__(self):
         return f'<Item {self.id}>'
+
+    def __hash__(self):
+        return hash(self.id)
 
 
 @dataclass

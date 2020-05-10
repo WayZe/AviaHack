@@ -1,8 +1,8 @@
 """empty message
 
-Revision ID: 5a0939dcf15b
+Revision ID: ffa565d6f07f
 Revises: 
-Create Date: 2020-05-09 15:37:16.828108
+Create Date: 2020-05-10 13:10:27.926453
 
 """
 from alembic import op
@@ -10,7 +10,7 @@ import sqlalchemy as sa
 
 
 # revision identifiers, used by Alembic.
-revision = '5a0939dcf15b'
+revision = 'ffa565d6f07f'
 down_revision = None
 branch_labels = None
 depends_on = None
@@ -36,6 +36,7 @@ def upgrade():
     )
     op.create_table('delivery',
     sa.Column('id', sa.Integer(), nullable=False),
+    sa.Column('user_code', sa.Integer(), nullable=True),
     sa.Column('client_id', sa.Integer(), nullable=True),
     sa.ForeignKeyConstraint(['client_id'], ['client.id'], ),
     sa.PrimaryKeyConstraint('id')
@@ -52,7 +53,7 @@ def upgrade():
     sa.Column('cell_id', sa.Integer(), nullable=True),
     sa.Column('return_id', sa.Integer(), nullable=True),
     sa.Column('barcode', sa.Integer(), nullable=True),
-    sa.Column('delivered_date', sa.Date(), nullable=True),
+    sa.Column('delivered_date', sa.DateTime(), nullable=True),
     sa.ForeignKeyConstraint(['cell_id'], ['items_cell.id'], ),
     sa.ForeignKeyConstraint(['delivery_id'], ['delivery.id'], ),
     sa.ForeignKeyConstraint(['return_id'], ['return.id'], ),
