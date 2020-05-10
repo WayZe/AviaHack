@@ -1,11 +1,11 @@
-1. Создание вирутального окружения
+# Запуск проекта
+## dev
 ```
-python -m venv venv
+    make build
+    make run 
 ```
-2. Установка пакетов из файла requirements.txt
+
+## prod
 ```
-pip install -r requirements.txt
+    make start 
 ```
-3. Зайти в виртуальное окружение:
-```
-source venv/bin/activate
