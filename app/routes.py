@@ -51,7 +51,7 @@ def get_cell(item_id=None):
     return models.Cell.get_delete_put_post(item_id)
 
 
-@app.route('/put_item', methods=['POST'])
+@app.route('/get_available_cell', methods=['POST'])
 def put_item():
     """
     Сортирует товар по ячейкам. Если ячейка для заказа не выделена, то ячейка выделяется и в item записывается ее id
@@ -70,17 +70,25 @@ def put_item():
     for c in delivery_cells.all():
         it_cell = models.Items_cell.query.get(c[0])
         if it_cell.cell.capacity > c[2]:
-            item.cell = it_cell
-            db.session.commit()
+            #item.cell = it_cell
+            #db.session.commit()
             return json.dumps({'cell': it_cell.cell.id})
 
     cell = models.Cell.query.filter(models.Cell.items_cell == None)
     it_cel = models.Items_cell(cell=cell.first())
-    item.cell = it_cel
+    #item.cell = it_cel
     db.session.add(it_cel)
     db.session.commit()
     return json.dumps({'cell': cell.first().id})
 
+
+@app.route('/put_in_cell', methods=['POST'])
+def put_item():
+    barcode = request.form.get('barcode')
+    cell_id = request.form.get('cell')
+    item = models.Item.query.filter_by(barcode=barcode).first()
+    item.cell = models.Items_cell.query.filter_by(id=cell_id).first()
+    return json.dumps({'barcode': item.barcode, 'cell': item.cell.id})
 
 @app.route('/give_item', methods=['POST'])
 def give_item():
@@ -141,4 +149,4 @@ def return_item():
     return_it = models.Return()
     item._return = return_it
     db.session.commit()
-    return json.dumps({'return_id': return_it.id})
+    return json.dumps({'return_id': return_it.id, 'item_id': item.id})
